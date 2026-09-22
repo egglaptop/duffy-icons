@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+  <title>DUFFY TRACKER</title>
+
+  <meta name="theme-color" content="#303232">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="DUFFY TRACKER">
+
+  <link rel="apple-touch-icon" href="./DUFFY-TRACKER-ICON.png">
+  <link rel="apple-touch-icon-precomposed" href="./DUFFY-TRACKER-ICON.png">
+  <link rel="icon" type="image/png" href="./DUFFY-TRACKER-ICON.png">
+
+  <style>
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html,body{
+      margin:0;
+      width:100%;
+      min-height:100%;
+      background:#f3f4f4;
+      color:#151817;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      min-height:100dvh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .box{
+      width:min(420px,100%);
+      text-align:center;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:22px;
+      font-weight:900;
+    }
+
+    p{
+      margin:0;
+      color:#68716d;
+      font-size:14px;
+    }
+
+    input{
+      width:100%;
+      height:48px;
+      margin-top:20px;
+      border:1px solid #d8ddda;
+      border-radius:11px;
+      background:#fff;
+      padding:0 12px;
+      font:inherit;
+      font-size:16px;
+      outline:none;
+    }
+
+    button{
+      width:100%;
+      min-height:48px;
+      margin-top:10px;
+      border:0;
+      border-radius:11px;
+      background:#018749;
+      color:#fff;
+      font:inherit;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .error{
+      min-height:20px;
+      margin-top:10px;
+      color:#b42318;
+      font-size:13px;
+    }
+
+    .spinner{
+      width:26px;
+      height:26px;
+      margin:0 auto 15px;
+      border:3px solid #dce2df;
+      border-top-color:#018749;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    #setup{
+      display:none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+
+    <div id="loading">
+      <div class="spinner"></div>
+      <h1>DUFFY TRACKER</h1>
+    </div>
+
+    <div id="setup">
+      <h1>DUFFY TRACKER</h1>
+      <p>Enter your private DUFFY access key once on this device.</p>
+
+      <input
+        id="key"
+        type="password"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="Private access key"
+      >
+
+      <button onclick="saveKey()">Open DUFFY TRACKER</button>
+
+      <div id="error" class="error"></div>
+    </div>
+
+  </div>
+
+<script>
+const APP_URL =
+  'https://script.google.com/macros/s/AKfycbyMxv3Lq6MvkL4Su9zMOgQaYWUoqKiZVyf8szKvXup_McV5bCCxd67t1MG26LcgAS4-Aw/exec';
+
+const STORAGE_KEY = 'duffyPrivateAccessKey';
+
+function getKey(){
+  try{
+    return localStorage.getItem(STORAGE_KEY) || '';
+  }catch(e){
+    return '';
+  }
+}
+
+function destination(key){
+  return APP_URL +
+    '?view=tracker&key=' +
+    encodeURIComponent(key);
+}
+
+function openApp(key){
+  location.replace(destination(key));
+}
+
+function saveKey(){
+  const input = document.getElementById('key');
+  const error = document.getElementById('error');
+
+  const key = (input.value || '').trim();
+
+  if(!key){
+    error.textContent = 'Enter the private access key.';
+    return;
+  }
+
+  try{
+    localStorage.setItem(STORAGE_KEY,key);
+  }catch(e){}
+
+  openApp(key);
+}
+
+(function start(){
+  const key = getKey();
+
+  if(key){
+    openApp(key);
+    return;
+  }
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('setup').style.display='block';
+})();
+</script>
+
+</body>
+</html>
